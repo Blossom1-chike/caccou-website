@@ -43,8 +43,16 @@ const contactCards = [
   },
 ];
 
+type FormData = {
+  name: string;
+  email: string;
+  phone: string;
+  service: string;
+  message: string;
+};
+
 export default function Contact() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     phone: "",
@@ -53,10 +61,31 @@ export default function Contact() {
   });
   const { ref, isInView } = useInView();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Thank you for your message! We will get back to you soon.");
-    setFormData({ name: "", email: "", phone: "", service: "", message: "" });
+    try {
+      const response = await fetch("/api/contact-us", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      }).then((data) => data.json());
+
+      if (response) {
+        toast.success(
+          "Thank you for your message! We will get back to you soon.",
+        );
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          service: "",
+          message: "",
+        });
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_e: unknown) {
+      toast.error("Error sending message, try again later!");
+    }
   };
 
   const handleChange = (
