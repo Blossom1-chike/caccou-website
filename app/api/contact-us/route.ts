@@ -1,9 +1,9 @@
 import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: NextRequest) {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
   const { name, email, message, service } = await request.json();
   //TODO: configure the DNS records to activate email sending
   try {
